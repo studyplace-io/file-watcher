@@ -14,7 +14,8 @@ import (
 
 func StartWatcher(cmd *cobra.Command, args []string) {
 	// 创建一个新的文件系统通知器
-	g := events.NewGenerator()
+	// TODO: 可由传入的参数指定不同处理模式
+	g := events.NewEventProcessor(events.K8sEventMode())
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
@@ -47,7 +48,7 @@ func StartWatcher(cmd *cobra.Command, args []string) {
 				if !ok {
 					return
 				}
-				g.HandleEvent(event)
+				g.SendEvent(event)
 			case err, ok := <-watcher.Errors:
 				if !ok {
 					return

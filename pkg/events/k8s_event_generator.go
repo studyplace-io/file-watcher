@@ -8,19 +8,12 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/klog/v2"
-	"log"
 	"strings"
 	"time"
 )
 
 // EventGenerator generates events.
 type EventGenerator struct {
-	//kubeConfig string
-	//
-	//kind      string
-	//name      string
-	//namespace string
-
 	client    *kubernetes.Clientset
 }
 
@@ -30,11 +23,11 @@ const (
 )
 
 // NewGenerator creates a generator.
-func NewGenerator() *EventGenerator {
+func NewGenerator() IEventProcessor {
 	r := common.K8sRestConfig()
 	clientSet, err := kubernetes.NewForConfig(r)
 	if err != nil {
-		fmt.Println("dkjsl;djflsd: ", err)
+		klog.Fatalf("init clientSet error: %s", err)
 		return nil
 	}
 	eg := &EventGenerator{
@@ -43,7 +36,7 @@ func NewGenerator() *EventGenerator {
 	return eg
 }
 
-// 获取文件事件类型
+// getEventType 获取文件事件类型
 func getEventType(event fsnotify.Event) string {
 	switch {
 	case event.Op&fsnotify.Create == fsnotify.Create:
@@ -61,12 +54,38 @@ func getEventType(event fsnotify.Event) string {
 	}
 }
 
-// SendKubernetesEvent 生成事件
-func (g *EventGenerator) SendKubernetesEvent(ee fsnotify.Event) error {
+// SendEvent 处理文件事件
+func (g *EventGenerator) SendEvent(ee fsnotify.Event) error {
+	switch {
+	case ee.Op&fsnotify.Create == fsnotify.Create:
+		klog.Infof("File modified: %s\n", ee.Name)
+	case ee.Op&fsnotify.Write == fsnotify.Write:
+		klog.Infof("File modified: %s\n", ee.Name)
+	case ee.Op&fsnotify.Remove == fsnotify.Remove:
+		klog.Infof("File removed: %s\n", ee.Name)
+	case ee.Op&fsnotify.Rename == fsnotify.Rename:
+		klog.Infof("File renamed: %s\n", ee.Name)
+	case ee.Op&fsnotify.Chmod == fsnotify.Chmod:
+		//log.Printf("File permission changed: %s\n", ee.Name)
+		return nil
+	}
+
+
+	// 创建 k8s 事件并发送
+	err := g.sendKubernetesEvent(ee)
+	if err != nil {
+		klog.Errorf("send k8s event error: %s", err)
+		return err
+	}
+
+	return nil
+}
+
+// sendKubernetesEvent 生成k8s事件
+func (g *EventGenerator) sendKubernetesEvent(ee fsnotify.Event) error {
 
 	eventType := getEventType(ee)
 	message := fmt.Sprintf("File %s %s", ee.Name, eventType)
-	fmt.Println(message)
 	ss := strings.Split(ee.Name, "/")
 	lastFileName := ss[len(ss)-1]
 
@@ -80,9 +99,9 @@ func (g *EventGenerator) SendKubernetesEvent(ee fsnotify.Event) error {
 		FirstTimestamp:      metav1.NewTime(now),
 		LastTimestamp:       metav1.NewTime(now),
 		EventTime:           metav1.NewMicroTime(now),
-		ReportingController: "k8s-events-generator",
-		ReportingInstance:   "k8s-events-generator",
-		Action: "Test",
+		ReportingController: "file-watcher",
+		ReportingInstance:   "file-watcher",
+		Action: "FileSource",
 		InvolvedObject:      v1.ObjectReference{
 			Kind: "File",
 			Name: lastFileName,
@@ -100,25 +119,4 @@ func (g *EventGenerator) SendKubernetesEvent(ee fsnotify.Event) error {
 	klog.Infof("Event generated successfully: %v", event.Name)
 
 	return nil
-}
-
-// HandleEvent 处理文件系统事件
-func (g *EventGenerator) HandleEvent(ee fsnotify.Event) {
-	switch {
-	case ee.Op&fsnotify.Create == fsnotify.Create:
-		log.Printf("File modified: %s\n", ee.Name)
-	case ee.Op&fsnotify.Write == fsnotify.Write:
-		log.Printf("File modified: %s\n", ee.Name)
-	case ee.Op&fsnotify.Remove == fsnotify.Remove:
-		log.Printf("File removed: %s\n", ee.Name)
-	case ee.Op&fsnotify.Rename == fsnotify.Rename:
-		log.Printf("File renamed: %s\n", ee.Name)
-	case ee.Op&fsnotify.Chmod == fsnotify.Chmod:
-		//log.Printf("File permission changed: %s\n", ee.Name)
-		return
-	}
-
-
-	// 创建 k8s 事件并发送
-	_ = g.SendKubernetesEvent(ee)
 }
