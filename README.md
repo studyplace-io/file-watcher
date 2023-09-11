@@ -9,8 +9,9 @@
 
 
 ### 项目启动
-- 使用
+- 使用方法
 ```bash
+# go run cmd/main.go <文件路径1> <文件路径2>
 ➜  file-watcher git:(main) go run cmd/main.go test.txt test11.yaml 
 I0910 11:55:06.031217   55434 init_k8s_config.go:33] run outside the cluster
 I0910 11:55:06.033137   55434 watcher.go:36] Start watching files: /Users/zhenyu.jiang/go/src/golanglearning/new_project/file-watcher/test.txt
@@ -27,6 +28,7 @@ I0910 11:55:34.411631   55434 event_generator.go:100] Event generated successful
 
 ```
 
+- 生成对应的event事件类型
 ```bash
 ➜  .kube kubectl get event
 LAST SEEN   TYPE       REASON              OBJECT             MESSAGE
