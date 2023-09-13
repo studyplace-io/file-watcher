@@ -1,7 +1,7 @@
 ### file-watcher 文件监听器
 
 ### 介绍
-`file-watcher`是基于golang实现的文件监听器，支持`Create` `Rename` `Write` `Remove`事件，并生成对应的k8s事件。
+`file-watcher`是基于golang实现的文件监听器，当文件有任何变更时，会产生事件，支持`Create` `Rename` `Write` `Remove`事件，并生成对应的k8s事件。
 ![](https://github.com/studyplace-io/file-watcher/blob/main/image/%E6%97%A0%E6%A0%87%E9%A2%98-2023-08-10-2343.png?raw=true)
 ### 项目功能
 - 自定义监听多个文件(使用空格分隔)
