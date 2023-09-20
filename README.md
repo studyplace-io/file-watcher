@@ -1,7 +1,7 @@
-### file-watcher 文件兼听器
+### file-watcher 文件监听器
 
 ### 介绍
-`file-watcher`是基于golang实现的文件兼听器，支持`Create` `Rename` `Write` `Remove`事件，并生成对应的k8s事件。
+`file-watcher`是基于golang实现的文件监听器，当文件有任何变更时，会产生事件，支持`Create` `Rename` `Write` `Remove`事件，并生成对应的k8s事件。
 ![](https://github.com/studyplace-io/file-watcher/blob/main/image/%E6%97%A0%E6%A0%87%E9%A2%98-2023-08-10-2343.png?raw=true)
 ### 项目功能
 - 自定义监听多个文件(使用空格分隔)
@@ -9,8 +9,9 @@
 
 
 ### 项目启动
-- 使用
+- 使用方法
 ```bash
+# go run cmd/main.go <文件路径1> <文件路径2>
 ➜  file-watcher git:(main) go run cmd/main.go test.txt test11.yaml 
 I0910 11:55:06.031217   55434 init_k8s_config.go:33] run outside the cluster
 I0910 11:55:06.033137   55434 watcher.go:36] Start watching files: /Users/zhenyu.jiang/go/src/golanglearning/new_project/file-watcher/test.txt
@@ -27,6 +28,7 @@ I0910 11:55:34.411631   55434 event_generator.go:100] Event generated successful
 
 ```
 
+- 生成对应的event事件类型
 ```bash
 ➜  .kube kubectl get event
 LAST SEEN   TYPE       REASON              OBJECT             MESSAGE
