@@ -38,3 +38,23 @@ LAST SEEN   TYPE       REASON              OBJECT             MESSAGE
 7s          Renamed    Watch file change   file/test11.yaml   File /Users/zhenyu.jiang/go/src/golanglearning/new_project/file-watcher/test11.yaml Renamed
 
 ```
+
+### 部署方式
+目前支持 二进制、docker部署、k8s 集群部署
+- docker 镜像
+```bash
+docker build -t file-watcher:v1 .
+```
+
+```bash
+[root@VM-0-16-centos yaml]# cd ..
+[root@VM-0-16-centos file-watcher]# kubectl apply -f yaml/rbac.yaml
+serviceaccount/file-watcher-sa unchanged
+clusterrole.rbac.authorization.k8s.io/file-watcher-clusterrole unchanged
+clusterrolebinding.rbac.authorization.k8s.io/file-watcher-ClusterRoleBinding unchanged
+
+[root@VM-0-16-centos file-watcher]# kubectl apply -f yaml/deploy.yaml
+deployment.apps/file-watcher unchanged
+```
+
+注：yaml/deploy.yaml在部署时，**需要特别注意挂载问题**

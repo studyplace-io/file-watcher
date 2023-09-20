@@ -10,16 +10,15 @@ type IEventProcessor interface {
 
 // EventProcessor 事件处理对象
 type EventProcessor struct {
-	IEventProcessor
+	IEventProcessor IEventProcessor
 }
 
 func NewEventProcessor(IEventProcessor IEventProcessor) *EventProcessor {
 	return &EventProcessor{IEventProcessor: IEventProcessor}
 }
 
-
 func (ep EventProcessor) SendEvent(ee fsnotify.Event) error {
-	return ep.SendEvent(ee)
+	return ep.IEventProcessor.SendEvent(ee)
 }
 
 // K8sEventMode k8s事件模式

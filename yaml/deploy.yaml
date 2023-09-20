@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-watcher
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: file-watcher
+  template:
+    metadata:
+      labels:
+        app: file-watcher
+    spec:
+      serviceAccountName: file-watcher-sa
+      nodeName: vm-0-16-centos  # 只调度到这个节点上，因为测试集群只有此node
+      containers:
+        - name: file-watcher
+          image: file-watcher:v1
+          imagePullPolicy: IfNotPresent
+          args:
+            # 前两个是测试使用
+            - test.txt
+            - test.yaml
+            # 需要写上用户自己监听的文件
+            - /app/file/example.json
+            - /app/file/example.yaml
+          env:
+            - name: "Release"
+              value: "1"
+          volumeMounts:
+            - name: example1
+              mountPath: /app/file/example.json
+            - name: example2
+              mountPath: /app/file/example.yaml
+      # 需要挂载用户自己监听的文件
+      volumes:
+        - name: example1
+          hostPath:
+            path: /root/file-watcher/example.json
+        - name: example2
+          hostPath:
+            path: /root/file-watcher/example.yaml
