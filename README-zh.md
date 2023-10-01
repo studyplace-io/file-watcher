@@ -1,16 +1,15 @@
-### file-watcher
-<a href="./README.md">English</a> | <a href="./README-zh.md">简体中文</a>
-### Introduction
-`file-watcher` is a file listener implemented based on golang. When there are any changes to the file, an event will be generated. It supports `Create` `Rename` `Write` `Remove` events and generates corresponding k8s events.
+### file-watcher 文件监听器
+### 介绍
+`file-watcher`是基于golang实现的文件监听器，当文件有任何变更时，会产生事件，支持`Create` `Rename` `Write` `Remove`事件，并生成对应的k8s事件。
 ![](https://github.com/studyplace-io/file-watcher/blob/main/image/%E6%97%A0%E6%A0%87%E9%A2%98-2023-08-10-2343.png?raw=true)
-### Project support
-- Customize monitoring of multiple files (separated by spaces)
-- Generate k8s event (event)(`Create` `Rename` `Write` `Remove`event)
+### 项目功能
+- 自定义监听多个文件(使用空格分隔)
+- 生成k8s event(事件)(`Create` `Rename` `Write` `Remove`事件)
 
-### start up
-- usage
+### 项目启动
+- 使用方法
 ```bash
-# go run cmd/main.go <filepath1> <filepath2>
+# go run cmd/main.go <文件路径1> <文件路径2>
 ➜  file-watcher git:(main) go run cmd/main.go test.txt test11.yaml 
 I0910 11:55:06.031217   55434 init_k8s_config.go:33] run outside the cluster
 I0910 11:55:06.033137   55434 watcher.go:36] Start watching files: /Users/zhenyu.jiang/go/src/golanglearning/new_project/file-watcher/test.txt
@@ -27,7 +26,7 @@ I0910 11:55:34.411631   55434 event_generator.go:100] Event generated successful
 
 ```
 
-- Generate the event type
+- 生成对应的event事件类型
 ```bash
 ➜  .kube kubectl get event
 LAST SEEN   TYPE       REASON              OBJECT             MESSAGE
@@ -39,13 +38,13 @@ LAST SEEN   TYPE       REASON              OBJECT             MESSAGE
 7s          Renamed    Watch file change   file/test11.yaml   File /Users/zhenyu.jiang/go/src/golanglearning/new_project/file-watcher/test11.yaml Renamed
 ```
 
-### Deploy
-Currently supports binary, docker deployment, k8s cluster deployment
-- docker image
+### 部署方式
+目前支持 二进制、docker部署、k8s 集群部署
+- docker 镜像
 ```bash
 docker build -t file-watcher:v1 .
 ```
-- k8s cluster
+
 ```bash
 [root@VM-0-16-centos yaml]# cd ..
 [root@VM-0-16-centos file-watcher]# kubectl apply -f yaml/rbac.yaml
@@ -57,4 +56,4 @@ clusterrolebinding.rbac.authorization.k8s.io/file-watcher-ClusterRoleBinding unc
 deployment.apps/file-watcher unchanged
 ```
 
-P.S.：When deploying yaml/deploy.yaml, you need to pay special attention to **the mounting problem**
+注：yaml/deploy.yaml在部署时，**需要特别注意挂载问题**
