@@ -1,7 +1,10 @@
 ### file-watcher
 <a href="./README.md">English</a> | <a href="./README-zh.md">简体中文</a>
 ### Introduction
-`file-watcher` is a file listener implemented based on golang. When there are any changes to the file, an event will be generated. It supports `Create` `Rename` `Write` `Remove` events and generates corresponding k8s events.
+- `file-watcher` is a file listener implemented based on golang. When there are any changes to the file, an event will be generated. 
+
+- It supports `Create` `Rename` `Write` `Remove` events and generates corresponding k8s events.
+
 ![](https://github.com/studyplace-io/file-watcher/blob/main/image/%E6%97%A0%E6%A0%87%E9%A2%98-2023-08-10-2343.png?raw=true)
 ### Project support
 - Customize monitoring of multiple files (separated by spaces)

@@ -58,7 +58,7 @@ func getEventType(event fsnotify.Event) string {
 func (g *EventGenerator) SendEvent(ee fsnotify.Event) error {
 	switch {
 	case ee.Op&fsnotify.Create == fsnotify.Create:
-		klog.Infof("File modified: %s\n", ee.Name)
+		klog.Infof("File created: %s\n", ee.Name)
 	case ee.Op&fsnotify.Write == fsnotify.Write:
 		klog.Infof("File modified: %s\n", ee.Name)
 	case ee.Op&fsnotify.Remove == fsnotify.Remove:

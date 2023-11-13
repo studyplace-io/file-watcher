@@ -11,7 +11,7 @@ func main() {
 
 	var rootCmd = &cobra.Command{
 		Use:   "file-watcher",
-		Short: "run file-wather",
+		Short: "run file-watcher",
 		Run: func(cmd *cobra.Command, args []string) {
 			// 启动事件监听器
 			file_watcher.StartWatcher(cmd, args)
