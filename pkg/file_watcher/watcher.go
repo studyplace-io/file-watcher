@@ -61,11 +61,11 @@ func StartWatcher(cmd *cobra.Command, args []string) {
 		}
 	}()
 
-
 	go func() {
 		sigCh := make(chan os.Signal, 1)
 		signal.Notify(sigCh, os.Interrupt)
 		<-sigCh
+		// 当接收中断通知时，关闭 chan
 		close(done)
 	}()
 
